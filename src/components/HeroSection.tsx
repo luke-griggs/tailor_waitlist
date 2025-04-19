@@ -1,10 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 const HeroSection = () => {
+  const [isMounted, setIsMounted] = useState(false);
   
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Load Tally script after component mounts
+    if (typeof window !== 'undefined') {
+      const script = document.createElement('script');
+      script.src = "https://tally.so/widgets/embed.js";
+      script.async = true;
+      script.onload = () => {
+        // @ts-ignore
+        if (typeof window.Tally !== 'undefined') {
+          // @ts-ignore
+          window.Tally.loadEmbeds();
+        }
+      };
+      document.body.appendChild(script);
+      
+      return () => {
+        document.body.removeChild(script);
+      };
+    }
+  }, []);
 
   return (
     <section className="py-16 md:py-24 bg-white">
@@ -28,6 +51,8 @@ const HeroSection = () => {
             thousands of fashion enthusiasts already on the waitlist.
           </motion.p>
         </div>
+        
+        {isMounted && (
           <iframe 
             data-tally-src="https://tally.so/embed/mRrpqP?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
             loading="lazy"
@@ -36,13 +61,10 @@ const HeroSection = () => {
             frameBorder="0"
             title="Tailor Waitlist"
           />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
-              `
-            }}
-          />          
+        )}
+        {!isMounted && (
+          <div style={{ height: "174px" }} />
+        )}         
       </div>
     </section>
   );

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
 
 const sliderImages = [
   "/SCREENSHOT1.PNG",
@@ -14,6 +14,7 @@ const sliderImages = [
 const PhoneSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoplay, setIsAutoplay] = useState(true);
+  const [dragStartX, setDragStartX] = useState(0);
 
   // Auto slide functionality
   useEffect(() => {
@@ -45,6 +46,30 @@ const PhoneSlider = () => {
     );
   };
 
+  // Handle drag gestures
+  const handleDragStart = (_: any, info: PanInfo) => {
+    setDragStartX(info.point.x);
+    pauseAutoplay();
+  };
+
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    const dragEndX = info.point.x;
+    const diff = dragStartX - dragEndX;
+    
+    // Define a threshold for swipe detection (e.g., 50px)
+    const threshold = 50;
+    
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        // Swiped left, go to next slide
+        nextSlide();
+      } else {
+        // Swiped right, go to previous slide
+        prevSlide();
+      }
+    }
+  };
+
   return (
     <section className="py-16 md:py-24 bg-[#f8f9fa] flex items-center justify-center">
       <motion.div
@@ -69,7 +94,14 @@ const PhoneSlider = () => {
 
 
               {/* Slider Content */}
-              <div className="absolute inset-0">
+              <motion.div 
+                className="absolute inset-0 touch-pan-y"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentIndex}
@@ -90,7 +122,7 @@ const PhoneSlider = () => {
                     />
                   </motion.div>
                 </AnimatePresence>
-              </div>
+              </motion.div>
             </div>
           </div>
 
