@@ -5,10 +5,10 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 const sliderImages = [
-  "/SCREENSHOT1.png",
-  "/SCREENSHOT2.png",
-  "/SCREENSHOT3.png",
-  "/SCREENSHOT4.png",
+  "/SCREENSHOT1.PNG",
+  "/SCREENSHOT2.PNG",
+  "/SCREENSHOT3.PNG",
+  "/SCREENSHOT4.PNG",
 ];
 
 const PhoneSlider = () => {
@@ -66,17 +66,10 @@ const PhoneSlider = () => {
             {/* Phone Screen */}
             <div className="relative w-full h-full overflow-hidden bg-white">
               {/* Status Bar */}
-              <div className="absolute top-0 left-0 right-0 h-6 bg-neutral-100 flex justify-between items-center px-4 z-20 text-[10px] text-black/70">
-                <div>5:47</div>
-                <div className="flex items-center space-x-1">
-                  <span>●●●</span>
-                  <span>📶</span>
-                  <span>🔋</span>
-                </div>
-              </div>
+
 
               {/* Slider Content */}
-              <div className="absolute inset-0 mt-6">
+              <div className="absolute inset-0">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentIndex}
