@@ -47,18 +47,23 @@ const PhoneSlider = () => {
   };
 
   // Handle drag gestures
-  const handleDragStart = (_: any, info: PanInfo) => {
+  const handleDragStart = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
     setDragStartX(info.point.x);
     pauseAutoplay();
   };
 
-  const handleDragEnd = (_: any, info: PanInfo) => {
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, 
+    info: PanInfo
+  ) => {
     const dragEndX = info.point.x;
     const diff = dragStartX - dragEndX;
-    
+
     // Define a threshold for swipe detection (e.g., 50px)
     const threshold = 50;
-    
+
     if (Math.abs(diff) > threshold) {
       if (diff > 0) {
         // Swiped left, go to next slide
@@ -92,9 +97,8 @@ const PhoneSlider = () => {
             <div className="relative w-full h-full overflow-hidden bg-white">
               {/* Status Bar */}
 
-
               {/* Slider Content */}
-              <motion.div 
+              <motion.div
                 className="absolute inset-0 touch-pan-y"
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}

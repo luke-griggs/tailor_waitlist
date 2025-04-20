@@ -15,9 +15,9 @@ const HeroSection = () => {
       script.src = "https://tally.so/widgets/embed.js";
       script.async = true;
       script.onload = () => {
-        // @ts-ignore
+        // @ts-expect-error - Tally is not defined in the global scope
         if (typeof window.Tally !== 'undefined') {
-          // @ts-ignore
+          // @ts-expect-error - Tally.loadEmbeds is not defined in the global scope
           window.Tally.loadEmbeds();
         }
       };
