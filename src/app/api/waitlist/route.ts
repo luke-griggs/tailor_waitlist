@@ -47,12 +47,14 @@ export async function POST(req: Request) {
 
     // Fire-and-forget confirmation email (do not block response on failure)
     const resendApiKey = process.env.RESEND_API_KEY;
-    const resendFrom = process.env.RESEND_FROM || "Tailor <hello@example.com>";
+    const resendFrom = process.env.RESEND_FROM || "Tailor <waitlist@tailor.clothing>";
     if (resendApiKey) {
       const resend = new Resend(resendApiKey);
       const to = normalized;
       const subject = "You're on the Tailor waitlist 🎉";
       const previewText = "Thanks for signing up — we'll be in touch soon.";
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+      const unsubscribeUrl = `${baseUrl}/api/unsubscribe?email=${encodeURIComponent(to)}`;
       const html = `
         <div style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #111;">
           <h2 style="margin:0 0 12px;font-size:20px">Welcome to Tailor 👋</h2>
@@ -60,6 +62,7 @@ export async function POST(req: Request) {
           <p style="margin:0 0 16px;line-height:1.6">We'll email you as soon as early access opens up.</p>
           <hr style="border:none;border-top:1px solid #eee;margin:20px 0" />
           <p style="margin:0;color:#666;font-size:12px">If you didn't request this, you can ignore this email.</p>
+          <p style="margin:12px 0 0;color:#666;font-size:12px">You can unsubscribe anytime by <a href="${unsubscribeUrl}" style="color:#7c3aed;">clicking here</a>.</p>
         </div>`;
       // Don't await: avoid blocking the response
       resend.emails

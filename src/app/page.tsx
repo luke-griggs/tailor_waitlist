@@ -150,73 +150,74 @@ export default function Home() {
                 <span>🔒</span> No spam. Unsubscribe anytime.
               </p>
             </div>
-            {/* Demo video */}
-            <motion.div
-              className="mt-12"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-white">
-                <video
-                  src="/demo_vid.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="w-full h-auto"
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </motion.div>
+          </motion.div>
 
-            {/* How it works */}
-            <motion.div
-              className="mt-10"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
-                  <div className="text-2xl">📸</div>
-                  <div
-                    className="mt-2 font-semibold"
-                    style={{ color: "#2D1B14" }}
-                  >
-                    Take a picture
-                  </div>
-                  <div className="text-sm" style={{ color: "#2D1B14" }}>
-                    Snap a quick photo of yourself.
-                  </div>
+          {/* Demo video - moved outside the max-w-md container */}
+          <motion.div
+            className="mt-12 max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
+            <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-white">
+              <video
+                src="/demo_vid.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-auto"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </motion.div>
+
+          {/* How it works */}
+          <motion.div
+            className="mt-10 max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+              <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
+                <div className="text-2xl">📸</div>
+                <div
+                  className="mt-2 font-semibold"
+                  style={{ color: "#2D1B14" }}
+                >
+                  Take a picture
                 </div>
-                <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
-                  <div className="text-2xl">🛍️</div>
-                  <div
-                    className="mt-2 font-semibold"
-                    style={{ color: "#2D1B14" }}
-                  >
-                    Find your clothing
-                  </div>
-                  <div className="text-sm" style={{ color: "#2D1B14" }}>
-                    Pick items you&apos;re curious about.
-                  </div>
-                </div>
-                <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
-                  <div className="text-2xl">⚡</div>
-                  <div
-                    className="mt-2 font-semibold"
-                    style={{ color: "#2D1B14" }}
-                  >
-                    See your fit
-                  </div>
-                  <div className="text-sm" style={{ color: "#2D1B14" }}>
-                    Preview how it looks on you.
-                  </div>
+                <div className="text-sm" style={{ color: "#2D1B14" }}>
+                  Snap a quick photo of yourself.
                 </div>
               </div>
-            </motion.div>
+              <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
+                <div className="text-2xl">🛍️</div>
+                <div
+                  className="mt-2 font-semibold"
+                  style={{ color: "#2D1B14" }}
+                >
+                  Find your clothing
+                </div>
+                <div className="text-sm" style={{ color: "#2D1B14" }}>
+                  Pick items you&apos;re curious about.
+                </div>
+              </div>
+              <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
+                <div className="text-2xl">⚡</div>
+                <div
+                  className="mt-2 font-semibold"
+                  style={{ color: "#2D1B14" }}
+                >
+                  See your fit
+                </div>
+                <div className="text-sm" style={{ color: "#2D1B14" }}>
+                  Preview how it looks on you.
+                </div>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       </div>
