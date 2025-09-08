@@ -21,31 +21,36 @@ export async function POST(req: Request) {
     // Normalize email server-side
     const normalized = email.trim().toLowerCase();
 
-    // Calculate created_at timestamp in ISO format
-    const created_at = new Date().toISOString();
-
-    // Attempt insert; ignore if duplicate
-    // Use INSERT OR IGNORE to leverage unique index on email_normalized
-    const insert = await client.execute({
-      sql: `INSERT OR IGNORE INTO waitlist (email, source, referrer, created_at) VALUES (?, ?, ?, ?)`,
-      args: [normalized, source ?? "landing", referrer ?? "", created_at],
+    // Check if email already exists first
+    const existingEmail = await client.execute({
+      sql: `SELECT id FROM waitlist WHERE email_normalized = ? LIMIT 1`,
+      args: [normalized],
     });
 
-    // If no row inserted, it already exists
-    if (insert.rowsAffected === 0) {
+    if (existingEmail.rows.length > 0) {
       return NextResponse.json(
         { ok: false, error: "Email already registered" },
         { status: 409 }
       );
     }
 
-    // Fetch the row id for confirmation
-    const row = await client.execute({
-      sql: `SELECT id FROM waitlist WHERE email_normalized = lower(trim(?)) LIMIT 1`,
-      args: [normalized],
+    // Calculate created_at timestamp in ISO format
+    const created_at = new Date().toISOString();
+
+    // Insert new entry
+    const insert = await client.execute({
+      sql: `INSERT INTO waitlist (email, email_normalized, source, referrer, created_at) VALUES (?, ?, ?, ?, ?)`,
+      args: [
+        email,
+        normalized,
+        source ?? "landing",
+        referrer ?? "",
+        created_at,
+      ],
     });
 
-    const id = row.rows[0]?.id as number | undefined;
+    // Get the inserted row id
+    const id = insert.lastInsertRowid as number | undefined;
 
     // Fire-and-forget confirmation email (do not block response on failure)
     const resendApiKey = process.env.RESEND_API_KEY;
