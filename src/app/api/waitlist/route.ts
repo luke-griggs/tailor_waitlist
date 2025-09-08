@@ -21,11 +21,14 @@ export async function POST(req: Request) {
     // Normalize email server-side
     const normalized = email.trim().toLowerCase();
 
+    // Calculate created_at timestamp in ISO format
+    const created_at = new Date().toISOString();
+
     // Attempt insert; ignore if duplicate
     // Use INSERT OR IGNORE to leverage unique index on email_normalized
     const insert = await client.execute({
-      sql: `INSERT OR IGNORE INTO waitlist (email, source, referrer) VALUES (?, ?, ?)`,
-      args: [normalized, source ?? "landing", referrer ?? ""],
+      sql: `INSERT OR IGNORE INTO waitlist (email, source, referrer, created_at) VALUES (?, ?, ?, ?)`,
+      args: [normalized, source ?? "landing", referrer ?? "", created_at],
     });
 
     // If no row inserted, it already exists
@@ -38,22 +41,23 @@ export async function POST(req: Request) {
 
     // Fetch the row id for confirmation
     const row = await client.execute({
-      sql: `SELECT id, created_at FROM waitlist WHERE email_normalized = lower(trim(?)) LIMIT 1`,
+      sql: `SELECT id FROM waitlist WHERE email_normalized = lower(trim(?)) LIMIT 1`,
       args: [normalized],
     });
 
     const id = row.rows[0]?.id as number | undefined;
-    const created_at = row.rows[0]?.created_at as string | undefined;
 
     // Fire-and-forget confirmation email (do not block response on failure)
     const resendApiKey = process.env.RESEND_API_KEY;
-    const resendFrom = process.env.RESEND_FROM || "Tailor <waitlist@tailor.clothing>";
+    const resendFrom =
+      process.env.RESEND_FROM || "Tailor <waitlist@tailor.clothing>";
     if (resendApiKey) {
       const resend = new Resend(resendApiKey);
       const to = normalized;
       const subject = "You're on the Tailor waitlist 🎉";
       const previewText = "Thanks for signing up — we'll be in touch soon.";
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
       const unsubscribeUrl = `${baseUrl}/api/unsubscribe?email=${encodeURIComponent(to)}`;
       const html = `
         <div style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #111;">
