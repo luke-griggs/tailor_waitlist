@@ -45,14 +45,14 @@ export default function Home() {
         >
           {/* Mobile headline (shorter, solid for better boldness) */}
           <motion.h1
-            className="block md:hidden text-4xl font-extrabold leading-tight tracking-tight mb-6"
+            className="block md:hidden text-5xl font-extrabold leading-tight tracking-tight mb-6"
             style={{ color: "#2D1B14" }}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <span className="block">Try it on.</span>
-            <span className="block">Before you order.</span>
+            <span className="block">Before u order.</span>
           </motion.h1>
 
           {/* Desktop headline */}
@@ -63,8 +63,10 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Try On Clothes Instantly with
-            <span style={{ color: "#2D1B14" }}> Tailor</span>
+            <span className="block">Try On Clothes Instantly</span>
+            <span className="block" style={{ color: "#2D1B14" }}>
+              with Tailor
+            </span>
           </motion.h1>
 
           <motion.div
@@ -117,7 +119,7 @@ export default function Home() {
                 <motion.button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full text-white rounded-md font-bold text-lg py-4 px-8 hover:shadow-lg transform transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full text-white rounded-md font-bold text-lg py-4 px-8 hover:shadow-lg hover:ring-2 hover:ring-[#2D1B14] hover:ring-opacity-50 hover:ring-offset-2 focus:ring-2 focus:ring-[#2D1B14] focus:ring-opacity-50 focus:ring-offset-2 focus:outline-none transform transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ backgroundColor: "#2D1B14" }}
                   whileHover={!isLoading ? { scale: 1.05 } : {}}
                   whileTap={!isLoading ? { scale: 0.95 } : {}}
