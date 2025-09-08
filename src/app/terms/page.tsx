@@ -11,7 +11,7 @@ export default function TermsPage() {
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Terms of Use</h1>
       <section className="space-y-4 text-gray-800 leading-relaxed">
         <p>
-          By accessing Tailor and joining the waitlist, you agree to these terms. Tailor is provided on an "as-is" basis without warranties of any kind.
+          By accessing Tailor and joining the waitlist, you agree to these terms. Tailor is provided on an &quot;as-is&quot; basis without warranties of any kind.
         </p>
 
         <h2 className="text-xl font-semibold mt-8">Waitlist</h2>
