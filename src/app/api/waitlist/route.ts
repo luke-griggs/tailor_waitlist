@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       args: [normalized],
     });
 
-    const created_at = Date.now();
+    const created_at = new Date().toISOString();
     let id: number | undefined;
 
     if (existingEmail.rows.length > 0) {
