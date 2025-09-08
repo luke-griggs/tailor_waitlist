@@ -52,7 +52,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <span className="block">Try it on.</span>
-            <span className="block">Before u order.</span>
+            <span className="block">Before your order.</span>
           </motion.h1>
 
           {/* Desktop headline */}
@@ -144,10 +144,12 @@ export default function Home() {
 
             <div className="mt-6 space-y-2">
               <p
-                className="text-xs flex items-center justify-center gap-1"
+                className="text-xs flex items-center justify-center gap-1 text-center"
                 style={{ color: "#2D1B14" }}
               >
-                <span>🔒</span> No spam. Unsubscribe anytime.
+                <span>🔒</span>
+                By joining, you agree to receive occasional emails from Tailor. No spam; unsubscribe anytime.
+                <a href="/privacy" className="ml-1 underline underline-offset-2 hover:opacity-80">Privacy Policy</a>.
               </p>
             </div>
           </motion.div>
