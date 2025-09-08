@@ -23,8 +23,12 @@ export default function Home() {
         setIsSubmitted(false);
         setEmail("");
       }, 5000);
-    } catch (e: any) {
-      setError(e?.message || "Something went wrong. Please try again.");
+    } catch (e: unknown) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Something went wrong. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -128,10 +132,10 @@ export default function Home() {
                 className="bg-green-50 border-2 border-green-500 rounded-2xl p-6"
               >
                 <div className="text-green-600 text-xl font-bold mb-2">
-                  ✅ You're in!
+                  ✅ You&apos;re in!
                 </div>
                 <p style={{ color: "#2D1B14" }}>
-                  We'll email you when your invite is ready.
+                  We&apos;ll email you when your invite is ready.
                 </p>
               </motion.div>
             )}
@@ -182,7 +186,7 @@ export default function Home() {
                     Find your clothing
                   </div>
                   <div className="text-sm" style={{ color: "#2D1B14" }}>
-                    Pick items you're curious about.
+                    Pick items you&apos;re curious about.
                   </div>
                 </div>
                 <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
