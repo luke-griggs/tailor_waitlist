@@ -1,56 +1,30 @@
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-
 export interface WaitlistEntry {
   email: string;
-  createdAt: Date;
+  createdAt?: string;
+  id?: number;
 }
 
-// Collection reference
-const waitlistCollection = collection(db, "waitlist");
-
-/**
- * Check if an email already exists in the waitlist
- * @param email - The email to check
- * @returns Promise<boolean> - True if email exists, false otherwise
- */
 export async function checkEmailExists(email: string): Promise<boolean> {
-  try {
-    const q = query(
-      waitlistCollection,
-      where("email", "==", email.toLowerCase())
-    );
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  } catch (error) {
-    console.error("Error checking email existence:", error);
-    throw error;
+  const res = await fetch(`/api/waitlist?email=${encodeURIComponent(email)}`);
+  if (!res.ok) {
+    console.error("checkEmailExists failed", await res.text());
+    return false;
   }
+  const data = await res.json();
+  return Boolean(data.exists);
 }
 
-/**
- * Add an email to the waitlist
- * @param email - The email to add
- * @returns Promise<string> - The document ID if successful
- */
-export async function addToWaitlist(email: string): Promise<string> {
-  try {
-    // First check if email already exists
-    const exists = await checkEmailExists(email);
+export async function addToWaitlist(email: string): Promise<{ id?: number; created_at?: string }>{
+  const res = await fetch(`/api/waitlist`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, source: "landing" }),
+  });
 
-    if (exists) {
-      throw new Error("Email already registered");
-    }
-
-    // Add the email to the waitlist
-    const docRef = await addDoc(waitlistCollection, {
-      email: email.toLowerCase(),
-      createdAt: new Date(),
-    });
-
-    return docRef.id;
-  } catch (error) {
-    console.error("Error adding to waitlist:", error);
-    throw error;
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data?.error || "Failed to join waitlist");
   }
+
+  return res.json();
 }
