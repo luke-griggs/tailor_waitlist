@@ -21,36 +21,42 @@ export async function POST(req: Request) {
     // Normalize email server-side
     const normalized = email.trim().toLowerCase();
 
-    // Check if email already exists first
+    // Check if email already exists and get subscription status
     const existingEmail = await client.execute({
-      sql: `SELECT id FROM waitlist WHERE email_normalized = ? LIMIT 1`,
+      sql: `SELECT id, subscribed FROM waitlist WHERE email = ? LIMIT 1`,
       args: [normalized],
     });
 
+    const created_at = Date.now();
+    let id: number | undefined;
+
     if (existingEmail.rows.length > 0) {
-      return NextResponse.json(
-        { ok: false, error: "Email already registered" },
-        { status: 409 }
-      );
+      const row = existingEmail.rows[0];
+      const existingId = row.id as number;
+      const isSubscribed = row.subscribed as number; // SQLite stores booleans as 0/1
+
+      if (isSubscribed === 1) {
+        // Already subscribed
+        return NextResponse.json(
+          { ok: false, error: "Email already registered" },
+          { status: 409 }
+        );
+      } else {
+        // Previously unsubscribed, resubscribe them
+        await client.execute({
+          sql: `UPDATE waitlist SET subscribed = 1, created_at = ?, source = ?, referrer = ? WHERE id = ?`,
+          args: [created_at, source ?? "landing", referrer ?? "", existingId],
+        });
+        id = existingId;
+      }
+    } else {
+      // New email, insert new entry
+      const insert = await client.execute({
+        sql: `INSERT INTO waitlist (email, created_at, source, referrer, subscribed) VALUES (?, ?, ?, ?, 1)`,
+        args: [normalized, created_at, source ?? "landing", referrer ?? ""],
+      });
+      id = insert.lastInsertRowid as number | undefined;
     }
-
-    // Calculate created_at timestamp in ISO format
-    const created_at = new Date().toISOString();
-
-    // Insert new entry
-    const insert = await client.execute({
-      sql: `INSERT INTO waitlist (email, email_normalized, source, referrer, created_at) VALUES (?, ?, ?, ?, ?)`,
-      args: [
-        email,
-        normalized,
-        source ?? "landing",
-        referrer ?? "",
-        created_at,
-      ],
-    });
-
-    // Get the inserted row id
-    const id = insert.lastInsertRowid as number | undefined;
 
     // Fire-and-forget confirmation email (do not block response on failure)
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -90,7 +96,7 @@ export async function POST(req: Request) {
       console.warn("RESEND_API_KEY not set; skipping confirmation email");
     }
 
-    return NextResponse.json({ ok: true, id, created_at });
+    return NextResponse.json({ ok: true, id: Number(id), created_at });
   } catch (err: unknown) {
     console.error("/api/waitlist POST error", err);
     return NextResponse.json(
@@ -113,7 +119,7 @@ export async function GET(req: Request) {
     const client = getTursoClient();
     const normalized = email.trim().toLowerCase();
     const row = await client.execute({
-      sql: `SELECT 1 as exists FROM waitlist WHERE email_normalized = lower(trim(?)) LIMIT 1`,
+      sql: `SELECT 1 as exists FROM waitlist WHERE email = ? LIMIT 1`,
       args: [normalized],
     });
     const exists = row.rows.length > 0;

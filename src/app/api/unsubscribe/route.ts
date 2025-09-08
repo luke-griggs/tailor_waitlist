@@ -6,7 +6,10 @@ export async function GET(req: Request) {
   const email = searchParams.get("email");
 
   if (!email) {
-    return NextResponse.json({ ok: false, error: "Missing email" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "Missing email" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -14,7 +17,7 @@ export async function GET(req: Request) {
     const client = getTursoClient();
 
     const result = await client.execute({
-      sql: `UPDATE waitlist SET subscribed = 0 WHERE email_normalized = lower(trim(?))`,
+      sql: `UPDATE waitlist SET subscribed = 0 WHERE email = ?`,
       args: [normalized],
     });
 
@@ -45,9 +48,14 @@ export async function GET(req: Request) {
         </body>
       </html>`;
 
-    return new NextResponse(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+    return new NextResponse(html, {
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
   } catch (err) {
     console.error("/api/unsubscribe error", err);
-    return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "Server error" },
+      { status: 500 }
+    );
   }
 }
