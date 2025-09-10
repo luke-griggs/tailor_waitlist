@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       id = insert.lastInsertRowid as number | undefined;
     }
 
-    // Fire-and-forget confirmation email (do not block response on failure)
+    // Send confirmation email (await to ensure execution in serverless env)
     const resendApiKey = process.env.RESEND_API_KEY;
     const resendFrom =
       process.env.RESEND_FROM || "Tailor <waitlist@tailor.clothing>";
@@ -78,22 +78,18 @@ export async function POST(req: Request) {
           <p style="margin:0;color:#666;font-size:12px">If you didn't request this, you can ignore this email.</p>
           <p style="margin:12px 0 0;color:#666;font-size:12px">You can unsubscribe anytime by <a href="${unsubscribeUrl}" style="color:#7c3aed;">clicking here</a>.</p>
         </div>`;
-      // Don't await: avoid blocking the response
-
-      console.log("Sending email to", to);
-      resend.emails
-        .send({
+      try {
+        await resend.emails.send({
           from: resendFrom,
           to: [to],
           subject: subject,
           html: html,
           headers: { "X-Entity-Ref-ID": String(id ?? "") },
           text: previewText,
-        })
-        .catch((e) => {
-          console.error("Resend email error", e);
         });
-      console.log("Email sent to", to);
+      } catch (e) {/
+        console.error("Resend email error", e);
+      }
     } else {
       console.warn("RESEND_API_KEY not set; skipping confirmation email");
     }
