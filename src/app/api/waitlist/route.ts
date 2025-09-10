@@ -67,8 +67,7 @@ export async function POST(req: Request) {
       const to = normalized;
       const subject = "You're on the Tailor waitlist 🎉";
       const previewText = "Thanks for signing up — we'll be in touch soon.";
-      const baseUrl =
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
       const unsubscribeUrl = `${baseUrl}/api/unsubscribe?email=${encodeURIComponent(to)}`;
       const html = `
         <div style="font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #111;">
@@ -80,6 +79,8 @@ export async function POST(req: Request) {
           <p style="margin:12px 0 0;color:#666;font-size:12px">You can unsubscribe anytime by <a href="${unsubscribeUrl}" style="color:#7c3aed;">clicking here</a>.</p>
         </div>`;
       // Don't await: avoid blocking the response
+
+      console.log("Sending email to", to);
       resend.emails
         .send({
           from: resendFrom,
@@ -92,6 +93,7 @@ export async function POST(req: Request) {
         .catch((e) => {
           console.error("Resend email error", e);
         });
+      console.log("Email sent to", to);
     } else {
       console.warn("RESEND_API_KEY not set; skipping confirmation email");
     }
