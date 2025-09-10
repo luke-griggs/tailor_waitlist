@@ -87,7 +87,7 @@ export async function POST(req: Request) {
           headers: { "X-Entity-Ref-ID": String(id ?? "") },
           text: previewText,
         });
-      } catch (e) {/
+      } catch (e) {
         console.error("Resend email error", e);
       }
     } else {
