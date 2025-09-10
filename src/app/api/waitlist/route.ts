@@ -84,9 +84,9 @@ export async function POST(req: Request) {
       resend.emails
         .send({
           from: resendFrom,
-          to,
-          subject,
-          html,
+          to: [to],
+          subject: subject,
+          html: html,
           headers: { "X-Entity-Ref-ID": String(id ?? "") },
           text: previewText,
         })
